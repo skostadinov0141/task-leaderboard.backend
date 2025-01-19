@@ -1,0 +1,19 @@
+name: task-leaderboard-dev
+
+services:
+
+  mongo-db:
+    container_name: mongo
+    image: mongo:latest
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${DB_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
+      MONGO_INITDB_DATABASE: ${DB_NAME}
+    ports:
+      - ${DB_PORT}:27017
+    volumes:
+      - task-leaderboard-dev-mongo-db-data:/data/db
+
+volumes:
+  task-leaderboard-dev-mongo-db-data:
