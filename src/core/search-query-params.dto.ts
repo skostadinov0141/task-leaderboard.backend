@@ -1,4 +1,4 @@
-export class SearchQueryParams {
+export class SearchQueryParamsDto {
   /**
    * The page number to return.
    * @example 1
