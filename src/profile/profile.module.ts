@@ -15,5 +15,6 @@ import { Profile, ProfileSchema } from './core/profile.schema';
       },
     ]),
   ],
+  exports: [ProfileService],
 })
 export class ProfileModule {}

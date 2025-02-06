@@ -1,4 +1,4 @@
-export class ProfilePostDto {
+export class CreateProfileDto {
   owner: any;
   achievements: any[];
   avatarPath: string;
