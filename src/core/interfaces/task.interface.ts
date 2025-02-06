@@ -1,4 +1,5 @@
 import { ILeaderboard } from './leaderboard.interface';
+import { IRun } from './run.interface';
 
 export interface ITask {
   _id: string;
@@ -8,7 +9,7 @@ export interface ITask {
   title: string;
   description: string;
   rules: string[];
-  runs: any[];
+  runs: IRun[];
   avgCompletionTime: number;
   baseReward: number;
 }
