@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Profile } from './core/profile.schema';
+import { Profile } from './schema/profile.schema';
 import { Model } from 'mongoose';
-import { CreateProfileDto } from './core/dtos/create-profile.dto';
-import { UpdateProfileDto } from './core/dtos/update-profile.dto';
+import { CreateProfileDto } from './dtos/create-profile.dto';
+import { UpdateProfileDto } from './dtos/update-profile.dto';
 
 @Injectable()
 export class ProfileService {

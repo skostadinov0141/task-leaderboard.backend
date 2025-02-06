@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IProfile } from './profile.interface';
+import { IProfile } from '../../core/profile.interface';
 
 @Schema({ timestamps: true })
 export class Profile implements IProfile {
