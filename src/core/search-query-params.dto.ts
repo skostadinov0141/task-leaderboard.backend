@@ -13,25 +13,25 @@ export class SearchQueryParamsDto {
 
   /**
    * The field to sort by.
-   * @example createdAt asc
+   * @example ''
    */
   sort?: string;
 
   /**
    * The search string to filter by.
-   * @example John Doe
+   * @example ''
    */
   searchString?: string;
 
   /**
-   * The fields to select.
-   * @example ['name', 'email']
+   * The fields to populate. (Comma-separated)
+   * @example ''
    */
-  populate?: string[];
+  populate?: string;
 
   /**
-   * The fields to select.
-   * @example *
+   * The fields to select. (Comma-separated)
+   * @example ''
    */
-  select: string[] | string = '*';
+  select?: string;
 }

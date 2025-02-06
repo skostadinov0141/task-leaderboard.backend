@@ -4,6 +4,7 @@ import { Profile } from './schema/profile.schema';
 import { Model } from 'mongoose';
 import { CreateProfileDto } from './dtos/create-profile.dto';
 import { UpdateProfileDto } from './dtos/update-profile.dto';
+import { SearchQueryParamsDto } from '../core/search-query-params.dto';
 
 @Injectable()
 export class ProfileService {
@@ -14,6 +15,11 @@ export class ProfileService {
   async create(payload: CreateProfileDto): Promise<Profile> {
     const createdProfile = new this.profileModel(payload);
     return createdProfile.save();
+  }
+
+  async getAll(payload: SearchQueryParamsDto): Promise<Profile[]> {
+    console.log(payload);
+    return this.profileModel.find().exec();
   }
 
   async getById(id: string): Promise<Profile> {
@@ -28,5 +34,9 @@ export class ProfileService {
     return this.profileModel
       .findByIdAndUpdate(id, payload, { new: true })
       .exec();
+  }
+
+  async delete(id: string): Promise<Profile> {
+    return this.profileModel.findByIdAndDelete(id).exec();
   }
 }
