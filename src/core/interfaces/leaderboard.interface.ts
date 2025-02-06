@@ -1,4 +1,5 @@
 import { IUser } from './user.interface';
+import { ITask } from './task.interface';
 
 export interface ILeaderboard {
   _id: string;
@@ -9,5 +10,5 @@ export interface ILeaderboard {
   users: IUser[];
   title: string;
   description: string;
-  tasks: any[];
+  tasks: ITask[];
 }
