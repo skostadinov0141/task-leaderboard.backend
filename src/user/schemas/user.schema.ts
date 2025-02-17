@@ -1,6 +1,6 @@
 import { IUser } from '../../core/interfaces/user.interface';
 import { Profile } from '../../profile/schema/profile.schema';
-import { Prop } from '@nestjs/mongoose';
+import { Prop, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 
 export class User implements IUser {
@@ -17,3 +17,5 @@ export class User implements IUser {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Profile.name })
   profile: Profile;
 }
+
+export const UserSchema = SchemaFactory.createForClass(User);
