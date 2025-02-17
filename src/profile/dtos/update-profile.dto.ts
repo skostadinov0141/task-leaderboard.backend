@@ -1,3 +1,4 @@
 import { CreateProfileDto } from './create-profile.dto';
+import { PartialType } from '@nestjs/swagger';
 
-export class UpdateProfileDto implements Partial<CreateProfileDto> {}
+export class UpdateProfileDto extends PartialType(CreateProfileDto) {}
