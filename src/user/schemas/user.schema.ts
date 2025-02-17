@@ -1,8 +1,9 @@
 import { IUser } from '../../core/interfaces/user.interface';
 import { Profile } from '../../profile/schema/profile.schema';
-import { Prop, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 
+@Schema({ timestamps: true })
 export class User implements IUser {
   _id: string;
   createdAt: Date;

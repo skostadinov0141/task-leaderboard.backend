@@ -15,7 +15,7 @@ export class UserService {
   ) {}
 
   async create(payload: CreateUserDto): Promise<User> {
-    const createdUser = new this.userModel(payload);
+    const createdUser = new this.userModel();
     const profilePayload: CreateProfileDto = {
       owner: createdUser._id,
       achievements: [],
@@ -24,6 +24,7 @@ export class UserService {
       displayName: payload.displayName,
     };
     createdUser.profile = await this.profileService.create(profilePayload);
+    createdUser.passwordHash = payload.password;
     return createdUser.save();
   }
 
