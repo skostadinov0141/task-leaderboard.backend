@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IProfile } from '../../core/interfaces/profile.interface';
 import mongoose from 'mongoose';
+import { User } from '../../user/schemas/user.schema';
 
 @Schema({ timestamps: true })
 export class Profile implements IProfile {
@@ -8,8 +9,8 @@ export class Profile implements IProfile {
   createdAt: Date;
   updatedAt: Date;
 
-  @Prop({ type: mongoose.Schema.Types.Mixed })
-  owner: any;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: User.name })
+  owner: User;
   @Prop()
   achievements: any[];
   @Prop()

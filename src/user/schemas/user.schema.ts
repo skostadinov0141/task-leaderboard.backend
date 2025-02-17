@@ -14,7 +14,7 @@ export class User implements IUser {
   passwordHash: string;
   @Prop()
   roles: any[];
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Profile.name })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Profile' })
   profile: Profile;
 }
 

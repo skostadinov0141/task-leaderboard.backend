@@ -1,5 +1,5 @@
 export class CreateProfileDto {
-  owner: any;
+  owner: string;
   achievements: any[];
   avatarPath: string;
   bio: string;
