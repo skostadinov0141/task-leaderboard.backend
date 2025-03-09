@@ -2,6 +2,7 @@ import { Body, Controller, Param, Post, Put } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
+import { LoginDto } from './dtos/login.dto';
 
 @Controller('user')
 export class UserController {
@@ -21,5 +22,13 @@ export class UserController {
   @Put(':id')
   async update(@Param('id') id: string, @Body() payload: UpdateUserDto) {
     return this.userService.update(id, payload);
+  }
+
+  /**
+   * Log in a user
+   */
+  @Post('login')
+  async login(@Body() payload: LoginDto) {
+    return this.userService.signIn(payload.username, payload.password);
   }
 }

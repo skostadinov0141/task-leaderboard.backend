@@ -1,4 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
 import { Model } from 'mongoose';
@@ -6,12 +11,15 @@ import { ProfileService } from '../profile/profile.service';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { CreateProfileDto } from '../profile/dtos/create-profile.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
+import { AuthTokenDto } from './dtos/auth-token.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<User>,
     private readonly profileService: ProfileService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async create(payload: CreateUserDto): Promise<User> {
@@ -25,10 +33,38 @@ export class UserService {
     };
     createdUser.profile = await this.profileService.create(profilePayload);
     createdUser.passwordHash = payload.password;
+    createdUser.username = payload.username;
     return createdUser.save();
   }
 
   async update(id: string, payload: UpdateUserDto): Promise<User> {
     return this.userModel.findByIdAndUpdate(id, payload, { new: true });
+  }
+
+  async signIn(username: string, password: string): Promise<AuthTokenDto> {
+    const user = await this.userModel.findOne({ username }).exec();
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    if (user.passwordHash !== password) {
+      throw new UnauthorizedException('Invalid password');
+    }
+    const accessPaylaod = {
+      sub: user._id,
+    };
+    const refreshPayload = {
+      sub: user._id,
+    };
+    const accessToken = this.jwtService.sign(accessPaylaod, {
+      expiresIn: '2h',
+    });
+    const refreshToken = this.jwtService.sign(refreshPayload, {
+      expiresIn: '30d',
+    });
+
+    return {
+      accessToken,
+      refreshToken,
+    };
   }
 }
