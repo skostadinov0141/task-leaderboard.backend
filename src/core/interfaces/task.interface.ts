@@ -12,4 +12,5 @@ export interface ITask {
   runs: IRun[];
   avgCompletionTime: number;
   baseReward: number;
+  multiplier: number;
 }

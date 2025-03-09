@@ -31,6 +31,9 @@ export class Task implements ITask {
 
   @Prop({ required: false })
   baseReward: number;
+
+  @Prop({ required: true })
+  multiplier: number;
 }
 
 export const TaskSchema = SchemaFactory.createForClass(Task);

@@ -136,7 +136,7 @@ export class LeaderboardService {
     const averageDifference = duration - task.avgCompletionTime;
     let finalReward: number;
     if (averageDifference < 0) {
-      finalReward += Math.abs(averageDifference) * 100;
+      finalReward += Math.abs(averageDifference) * task.multiplier;
     } else {
       finalReward = task.baseReward;
     }

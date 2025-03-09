@@ -3,4 +3,5 @@ export class CreateTaskDto {
   description: string;
   rules: string[];
   baseReward: number;
+  multiplier: number;
 }
