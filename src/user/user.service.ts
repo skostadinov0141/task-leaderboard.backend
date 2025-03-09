@@ -37,6 +37,10 @@ export class UserService {
     return createdUser.save();
   }
 
+  async getOne(id: string): Promise<User> {
+    return this.userModel.findById(id).exec();
+  }
+
   async update(id: string, payload: UpdateUserDto): Promise<User> {
     return this.userModel.findByIdAndUpdate(id, payload, { new: true });
   }
