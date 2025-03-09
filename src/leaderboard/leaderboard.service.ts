@@ -21,16 +21,18 @@ export class LeaderboardService {
     private readonly userService: UserService,
   ) {}
 
-  async createTask(leaderboard: Leaderboard | string, payload: CreateTaskDto) {
-    const foundLeaderboard =
-      typeof leaderboard === 'string'
-        ? await this.leaderboardModel.findById(leaderboard)
-        : leaderboard;
+  async createTask(leaderboard: string, payload: CreateTaskDto) {
+    const foundLeaderboard = await this.leaderboardModel
+      .findById(leaderboard)
+      .exec();
     const task = new this.taskModel({
       ...payload,
-      leaderboard: foundLeaderboard,
+      leaderboard: foundLeaderboard._id,
+      avgCompletionTime: 0,
     });
     await task.save();
+    foundLeaderboard.tasks.push(task._id as unknown as Task);
+    await foundLeaderboard.save();
     return task;
   }
 
@@ -39,18 +41,23 @@ export class LeaderboardService {
       ...payload,
       owner: user,
       tasks: [],
+      users: [user],
+      admins: [user],
     });
-    const tasks = payload.tasks.map((task) =>
-      this.createTask(leaderboard, task),
-    );
-    leaderboard.tasks = await Promise.all(tasks);
-    leaderboard.users.push(user);
-    leaderboard.admins.push(user);
     await leaderboard.save();
+    const tasks = payload.tasks.map((taskData) => {
+      return new this.taskModel({
+        ...taskData,
+        leaderboard: leaderboard._id,
+      });
+    });
+    leaderboard.tasks = tasks.map((task) => task._id) as unknown as Task[];
+    await Promise.all(tasks.map((task) => task.save()));
+    return leaderboard.save();
   }
 
   async findAll() {
-    return this.leaderboardModel.find().exec();
+    return this.leaderboardModel.find().populate(['tasks']).exec();
   }
 
   async update(id: string, payload: UpdateLeaderboardDto, user: User) {
@@ -80,7 +87,7 @@ export class LeaderboardService {
     if (!adminUser) {
       throw new HttpException('User not found', 404);
     }
-    leaderboard.admins.push(adminUser);
+    leaderboard.admins.push(adminUser._id as unknown as User);
     return leaderboard.save();
   }
 
@@ -98,7 +105,7 @@ export class LeaderboardService {
 
   async join(leaderboardId: string, user: User) {
     const leaderboard = await this.findOneLeaderboard(leaderboardId);
-    leaderboard.users.push(user);
+    leaderboard.users.push(user._id as unknown as User);
     return leaderboard.save();
   }
 
@@ -121,20 +128,22 @@ export class LeaderboardService {
       task,
     });
     await run.save();
-    task.runs.push(run);
+    task.runs.push(run._id as unknown as Run);
     await task.save();
     return run;
   }
 
   async endRun(runId: string, user: User) {
     const run = await this.getOneRun(runId);
-    if (run.user._id !== user._id) {
+    if (run.user._id.toString() !== user._id.toString()) {
       throw new HttpException('Forbidden', 403);
     }
+    if (run.endTime) throw new HttpException('Run already finished', 400);
     const task = await this.findOneTask(run.task._id);
-    const duration = run.endTime.getTime() - run.createdAt.getTime();
-    const averageDifference = duration - task.avgCompletionTime;
-    let finalReward: number;
+    const endTime = new Date();
+    const duration = endTime.getTime() - run.createdAt.getTime();
+    const averageDifference = duration - (task.avgCompletionTime || 0);
+    let finalReward: number = 0;
     if (averageDifference < 0) {
       finalReward += Math.abs(averageDifference) * task.multiplier;
     } else {
@@ -142,7 +151,24 @@ export class LeaderboardService {
     }
     run.duration = duration;
     run.finalReward = finalReward;
+    run.endTime = endTime;
     await run.save();
+    task.avgCompletionTime = await this.calculateAverageCompletionTime(
+      task._id,
+    );
+    await task.save();
     return run;
+  }
+
+  async calculateAverageCompletionTime(taskId: string) {
+    const task = await this.taskModel.findById(taskId).populate('runs').exec();
+    if (!task) throw new HttpException('Task not found', 404);
+    console.log(task);
+    if (task.runs.length === 0) return 0;
+    const totalDuration = task.runs.reduce((acc, run) => {
+      return acc + (run.duration || 0);
+    }, 0);
+    console.log(totalDuration);
+    return totalDuration / task.runs.length;
   }
 }

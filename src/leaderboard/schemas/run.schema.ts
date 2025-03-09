@@ -10,7 +10,7 @@ export class Run implements IRun {
   createdAt: Date;
   updatedAt: Date;
 
-  @Prop({ required: true })
+  @Prop({ required: false })
   endTime: Date;
 
   @Prop({ required: false })
@@ -22,7 +22,7 @@ export class Run implements IRun {
   @Prop({ required: true, type: mongoose.Types.ObjectId, ref: User.name })
   user: User;
 
-  @Prop({ required: true, type: mongoose.Types.ObjectId, ref: Task.name })
+  @Prop({ required: true, type: mongoose.Types.ObjectId, ref: 'Task' })
   task: Task;
 }
 

@@ -1,4 +1,4 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory, Virtual } from '@nestjs/mongoose';
 import { ITask } from '../../core/interfaces/task.interface';
 import { Leaderboard } from './leaderboard.schema';
 import { Run } from './run.schema';
@@ -23,11 +23,11 @@ export class Task implements ITask {
   @Prop({ required: true })
   rules: string[];
 
-  @Prop({ required: true, type: [mongoose.Types.ObjectId], ref: User.name })
+  @Prop({ required: true, type: [mongoose.Types.ObjectId], ref: Run.name })
   runs: Run[];
 
   @Prop({ required: false })
-  avgCompletionTime: number = 0;
+  avgCompletionTime: number;
 
   @Prop({ required: false })
   baseReward: number;
