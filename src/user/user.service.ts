@@ -49,13 +49,18 @@ export class UserService {
     if (user.passwordHash !== password) {
       throw new UnauthorizedException('Invalid password');
     }
-    const accessPaylaod = {
+    return this.createToken(user);
+  }
+
+  async createToken(user: User): Promise<AuthTokenDto> {
+    const accessPayload = {
       sub: user._id,
     };
     const refreshPayload = {
       sub: user._id,
+      type: 'refresh',
     };
-    const accessToken = this.jwtService.sign(accessPaylaod, {
+    const accessToken = this.jwtService.sign(accessPayload, {
       expiresIn: '2h',
     });
     const refreshToken = this.jwtService.sign(refreshPayload, {
@@ -66,5 +71,23 @@ export class UserService {
       accessToken,
       refreshToken,
     };
+  }
+
+  async refreshToken(refreshToken: string): Promise<AuthTokenDto> {
+    const decoded = this.jwtService.verify(refreshToken);
+    if (decoded.type !== 'refresh') {
+      throw new UnauthorizedException('Invalid token');
+    }
+    const user = await this.getUserFromToken(refreshToken);
+    return this.createToken(user);
+  }
+
+  async getUserFromToken(token: string): Promise<User> {
+    const decoded = this.jwtService.verify(token);
+    const user = await this.userModel.findById(decoded.sub).exec();
+    if (!user) {
+      throw new HttpException('User not found', 404);
+    }
+    return user;
   }
 }

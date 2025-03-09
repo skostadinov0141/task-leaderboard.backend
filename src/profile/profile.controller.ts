@@ -2,7 +2,9 @@ import { Controller, Delete, Get, Param, Put, Query } from '@nestjs/common';
 import { ProfileService } from './profile.service';
 import { SearchQueryParamsDto } from '../core/search-query-params.dto';
 import { UpdateProfileDto } from './dtos/update-profile.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
+@ApiBearerAuth()
 @Controller('profile')
 export class ProfileController {
   constructor(private readonly profileService: ProfileService) {}

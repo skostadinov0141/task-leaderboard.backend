@@ -6,10 +6,17 @@ import { User, UserSchema } from './schemas/user.schema';
 import { ProfileModule } from '../profile/profile.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AuthGuard } from './guards/auth.guard';
 
 @Module({
   controllers: [UserController],
-  providers: [UserService],
+  providers: [
+    UserService,
+    {
+      provide: 'APP_GUARD',
+      useClass: AuthGuard,
+    },
+  ],
   imports: [
     ProfileModule,
     MongooseModule.forFeature([
