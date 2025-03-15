@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  Req,
+} from '@nestjs/common';
 import { LeaderboardService } from './leaderboard.service';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { Request } from 'express';
@@ -29,6 +38,24 @@ export class LeaderboardController {
   @Get(':id')
   async getLeaderboard(@Param('id') id: string): Promise<Leaderboard> {
     return this.leaderboardService.findOneLeaderboard(id);
+  }
+
+  @Put(':id/addAdmin')
+  async addAdmin(
+    @Param('id') id: string,
+    @Req() request: Request,
+    @Query() adminId: string,
+  ): Promise<Leaderboard> {
+    return this.leaderboardService.addAdmin(id, request['user'], adminId);
+  }
+
+  @Put(':id/removeAdmin')
+  async removeAdmin(
+    @Param('id') id: string,
+    @Req() request: Request,
+    @Query() adminId: string,
+  ): Promise<Leaderboard> {
+    return this.leaderboardService.removeAdmin(id, request['user'], adminId);
   }
 
   @Post(':id/task')
