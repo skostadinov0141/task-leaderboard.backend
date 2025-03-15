@@ -21,6 +21,14 @@ export class LeaderboardService {
     private readonly userService: UserService,
   ) {}
 
+  async isUserAdmin(leaderboard: Leaderboard, user: User) {
+    return leaderboard.admins.includes(user);
+  }
+
+  async isUserOwner(leaderboard: Leaderboard, user: User) {
+    return leaderboard.owner._id.toString() === user._id.toString();
+  }
+
   async createTask(leaderboard: string, payload: CreateTaskDto) {
     const foundLeaderboard = await this.leaderboardModel
       .findById(leaderboard)
@@ -83,6 +91,8 @@ export class LeaderboardService {
 
   async addAdmin(leaderboardId: string, user: User, adminId: string) {
     const leaderboard = await this.findOneLeaderboard(leaderboardId);
+    if (!(await this.isUserOwner(leaderboard, user)))
+      throw new HttpException('Forbidden', 403);
     const adminUser = await this.userService.getOne(adminId);
     if (!adminUser) {
       throw new HttpException('User not found', 404);
@@ -93,6 +103,8 @@ export class LeaderboardService {
 
   async removeAdmin(leaderboardId: string, user: User, adminId: string) {
     const leaderboard = await this.findOneLeaderboard(leaderboardId);
+    if (!(await this.isUserOwner(leaderboard, user)))
+      throw new HttpException('Forbidden', 403);
     const adminUser = await this.userService.getOne(adminId);
     if (!adminUser) {
       throw new HttpException('User not found', 404);

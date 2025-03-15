@@ -1,9 +1,8 @@
-import { Prop, Schema, SchemaFactory, Virtual } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ITask } from '../../core/interfaces/task.interface';
 import { Leaderboard } from './leaderboard.schema';
 import { Run } from './run.schema';
 import mongoose from 'mongoose';
-import { User } from '../../user/schemas/user.schema';
 
 @Schema({ timestamps: true })
 export class Task implements ITask {
