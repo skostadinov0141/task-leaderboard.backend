@@ -16,6 +16,7 @@ import { CreateTaskDto } from './dtos/create-task.dto';
 import { Run } from './schemas/run.schema';
 import { Task } from './schemas/task.schema';
 import { Leaderboard } from './schemas/leaderboard.schema';
+import { UpdateLeaderboardDto } from './dtos/update-leaderboard.dto';
 
 @ApiBearerAuth()
 @Controller('leaderboard')
@@ -38,6 +39,15 @@ export class LeaderboardController {
   @Get(':id')
   async getLeaderboard(@Param('id') id: string): Promise<Leaderboard> {
     return this.leaderboardService.findOneLeaderboard(id);
+  }
+
+  @Put(':id')
+  async updateLeaderboard(
+    @Req() request: Request,
+    @Param('id') id: string,
+    @Body() payload: UpdateLeaderboardDto,
+  ): Promise<Leaderboard> {
+    return this.leaderboardService.update(id, payload, request['user']);
   }
 
   @Put(':id/addAdmin')
@@ -64,6 +74,11 @@ export class LeaderboardController {
     @Body() payload: CreateTaskDto,
   ): Promise<Task> {
     return this.leaderboardService.createTask(id, payload);
+  }
+
+  @Get('task/:id')
+  async getTask(@Param('id') id: string): Promise<Task> {
+    return this.leaderboardService.findOneTask(id);
   }
 
   @Post('task/:id/run/start')
