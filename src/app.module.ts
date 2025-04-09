@@ -4,13 +4,12 @@ import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './user/user.module';
-import { TokenService } from './token/token.service';
-import { TokenModule } from './token/token.module';
 import { CacheModule } from '@nestjs/cache-manager';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
-    CacheModule.register(),
+    CacheModule.register({ isGlobal: true }),
     MongooseModule.forRoot(
       'mongodb://root:secret@localhost:27017/leaderboard?authSource=admin',
     ),
@@ -18,9 +17,9 @@ import { CacheModule } from '@nestjs/cache-manager';
       isGlobal: true,
     }),
     UserModule,
-    TokenModule,
+    AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService, TokenService],
+  providers: [AppService],
 })
 export class AppModule {}

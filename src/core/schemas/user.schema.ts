@@ -4,24 +4,6 @@ import { Achievement } from './achievement.schema';
 import { Leaderboard } from './leaderboard.schema';
 import { Run } from './run.schema';
 
-@Schema({ timestamps: true })
-export class User {
-  _id: string;
-  createdAt: Date;
-  updatedAt: Date;
-
-  @Prop()
-  googleId: string;
-  @Prop()
-  lastLogin: Date;
-  @Prop()
-  profile: Profile;
-  @Prop()
-  role: Role;
-  @Prop()
-  email: string;
-}
-
 export class Profile {
   @Prop()
   displayName: string;
@@ -77,6 +59,24 @@ export class RoleChangeHistoryEntry {
   date: Date;
   @Prop()
   value: string;
+}
+
+@Schema({ timestamps: true })
+export class User {
+  _id: string;
+  createdAt: Date;
+  updatedAt: Date;
+
+  @Prop()
+  googleId: string;
+  @Prop()
+  lastLogin: Date;
+  @Prop()
+  profile: Profile;
+  @Prop()
+  role: Role;
+  @Prop()
+  email: string;
 }
 
 export enum EPrivileges {}

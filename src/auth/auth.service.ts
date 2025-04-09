@@ -11,8 +11,8 @@ import ms, { StringValue } from 'ms';
 export class AuthService {
   constructor(
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
-    private readonly configService: ConfigService,
-    private readonly jwtService: JwtService,
+    private configService: ConfigService,
+    private jwtService: JwtService,
   ) {}
 
   async validateGoogleIdToken(idToken: string): Promise<TokenPayload> {
