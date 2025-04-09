@@ -4,6 +4,7 @@ import { User } from '../core/schemas/user.schema';
 import { Model } from 'mongoose';
 import { SignUpDto } from './dtos/sign-up.dto';
 import { AuthService } from '../auth/auth.service';
+import { SignInDto } from './dtos/sign-in.dto';
 
 @Injectable()
 export class UserService {
@@ -12,17 +13,19 @@ export class UserService {
     private readonly tokenService: AuthService,
   ) {}
 
-  async signUp(payload: SignUpDto): Promise<User> {
+  async signUp(
+    payload: SignUpDto,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     const {
       email,
       name,
       sub: googleId,
     } = await this.tokenService.validateGoogleIdToken(payload.idToken);
-    const user = await this.userModel.findOne({ googleId });
-    if (user) {
+    const existingUser = await this.userModel.findOne({ googleId });
+    if (existingUser) {
       throw new HttpException('User already exists', 409);
     }
-    return new this.userModel({
+    const newUser = new this.userModel({
       email,
       name,
       googleId,
@@ -30,5 +33,20 @@ export class UserService {
         displayName: name,
       },
     });
+    const savedUser = await newUser.save();
+    return await this.tokenService.createTokenPair(savedUser._id);
+  }
+
+  async signIn(
+    payload: SignInDto,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    const { sub: googleId } = await this.tokenService.validateGoogleIdToken(
+      payload.idToken,
+    );
+    const existingUser = await this.userModel.findOne({ googleId });
+    if (!existingUser) {
+      throw new HttpException('User not found', 404);
+    }
+    return await this.tokenService.createTokenPair(existingUser._id);
   }
 }
