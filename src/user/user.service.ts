@@ -3,13 +3,13 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User } from '../core/schemas/user.schema';
 import { Model } from 'mongoose';
 import { SignUpDto } from './dtos/sign-up.dto';
-import { TokenService } from '../token/token.service';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel('User') private readonly userModel: Model<User>,
-    private readonly tokenService: TokenService,
+    private readonly tokenService: AuthService,
   ) {}
 
   async signUp(payload: SignUpDto): Promise<User> {

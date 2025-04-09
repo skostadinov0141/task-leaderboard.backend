@@ -8,7 +8,7 @@ import { randomBytes } from 'crypto';
 import ms, { StringValue } from 'ms';
 
 @Injectable()
-export class TokenService {
+export class AuthService {
   constructor(
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
     private readonly configService: ConfigService,
