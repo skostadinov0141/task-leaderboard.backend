@@ -34,7 +34,6 @@ export class TokenService {
   }
 
   async createAccessToken(userId: string): Promise<string> {
-    // Implement your logic to create an access token
     const tokenPayload = {
       sub: userId,
     };
@@ -44,7 +43,7 @@ export class TokenService {
     });
   }
 
-  async createrefreshCode(userId: string): Promise<string> {
+  async createRefreshCode(userId: string): Promise<string> {
     const code = randomBytes(64).toString('hex');
     const cacheKey = `refreshCode:${userId}`;
     const existingCode = await this.cacheManager.get(cacheKey);
@@ -57,5 +56,47 @@ export class TokenService {
       ms(this.configService.get('REFRESH_CODE_EXPIRATION_TIME') as StringValue),
     );
     return code;
+  }
+
+  async validateRefreshCode(userId: string, code: string): Promise<boolean> {
+    const cacheKey = `refreshCode:${userId}`;
+    const cachedCode = await this.cacheManager.get<string>(cacheKey);
+    if (cachedCode !== code) {
+      throw new HttpException('Invalid refresh code', 401);
+    }
+    return true;
+  }
+
+  async validateAccessToken(token: string): Promise<any> {
+    try {
+      return await this.jwtService.verifyAsync(token, {
+        secret: this.configService.get('JWT_SECRET'),
+      });
+    } catch (error) {
+      throw new HttpException('Invalid access token', 401);
+    }
+  }
+
+  async invalidateRefreshCode(userId: string): Promise<void> {
+    const cacheKey = `refreshCode:${userId}`;
+    await this.cacheManager.del(cacheKey);
+  }
+
+  async createTokenPair(
+    userId: string,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    const accessToken = await this.createAccessToken(userId);
+    const refreshToken = await this.createRefreshCode(userId);
+    return { accessToken, refreshToken };
+  }
+
+  async refreshTokenPair(
+    userId: string,
+    refreshToken: string,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    await this.validateRefreshCode(userId, refreshToken);
+    const { accessToken, refreshToken: newRefreshToken } =
+      await this.createTokenPair(userId);
+    return { accessToken, refreshToken: newRefreshToken };
   }
 }

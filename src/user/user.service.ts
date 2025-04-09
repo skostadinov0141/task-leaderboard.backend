@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User } from '../core/schemas/user.schema';
 import { Model } from 'mongoose';
 import { SignUpDto } from './dtos/sign-up.dto';
-import { ConfigService } from '@nestjs/config';
 import { TokenService } from '../token/token.service';
 
 @Injectable()
@@ -23,7 +22,7 @@ export class UserService {
     if (user) {
       throw new HttpException('User already exists', 409);
     }
-    const newUser = new this.userModel({
+    return new this.userModel({
       email,
       name,
       googleId,
@@ -31,6 +30,5 @@ export class UserService {
         displayName: name,
       },
     });
-    return newUser;
   }
 }
