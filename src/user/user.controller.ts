@@ -9,6 +9,7 @@ import { UpdateDisplayNameDto } from './dtos/update-display-name.dto';
 import { User } from '../core/schemas/user.schema';
 import { UpdateBioDto } from './dtos/update-bio.dto';
 import { UpdatePreferencesDto } from './dtos/update-preferences.dto';
+import { AddLeaderboardDisplayDto } from './dtos/add-leaderboard-display.dto';
 
 @Controller('user')
 export class UserController {
@@ -78,5 +79,17 @@ export class UserController {
     @Body() payload: UpdatePreferencesDto,
   ): Promise<User> {
     return await this.userService.changePreferences(request.user, payload);
+  }
+
+  /**
+   * Add a new leaderboard to the user's display list.
+   */
+  @Patch('profile/leaderboard-display')
+  @ApiBearerAuth()
+  async addLeaderboardDisplay(
+    @Req() request: any,
+    @Body() payload: AddLeaderboardDisplayDto,
+  ): Promise<User> {
+    return await this.userService.addLeaderboardDisplay(request.user, payload);
   }
 }
