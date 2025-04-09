@@ -46,4 +46,12 @@ export class UserService {
     }
     return await this.tokenService.createTokenPair(existingUser._id);
   }
+
+  async getUserById(userId: string): Promise<User> {
+    const user = await this.userModel.findById(userId);
+    if (!user) {
+      throw new HttpException('User not found', 404);
+    }
+    return user;
+  }
 }

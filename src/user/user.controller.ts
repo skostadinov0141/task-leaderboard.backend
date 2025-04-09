@@ -1,9 +1,10 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req } from '@nestjs/common';
 import { UserService } from './user.service';
 import { Public } from '../auth/is-public.decorator';
 import { SignUpDto } from './dtos/sign-up.dto';
 import { TokenPairDto } from '../auth/dtos/token-pair.dto';
 import { SignInDto } from './dtos/sign-in.dto';
+import { Request } from 'express';
 
 @Controller('user')
 export class UserController {
@@ -25,5 +26,13 @@ export class UserController {
   @Public()
   async signIn(@Body() payload: SignInDto): Promise<TokenPairDto> {
     return await this.userService.signIn(payload);
+  }
+
+  /**
+   * Get own user.
+   */
+  @Get('me')
+  async getMe(@Req() request: any): Promise<any> {
+    return await this.userService.getUserById(request.user);
   }
 }
