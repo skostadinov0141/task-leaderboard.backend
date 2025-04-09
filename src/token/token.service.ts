@@ -1,4 +1,4 @@
-import { HttpException, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { OAuth2Client, TokenPayload } from 'google-auth-library';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
@@ -24,11 +24,11 @@ export class TokenService {
       })
       .catch((reason) => {
         console.error('Error verifying ID token:', reason);
-        throw new HttpException('Invalid ID token', 401);
+        throw new UnauthorizedException('Invalid ID token');
       });
     const payloadData = ticket.getPayload();
     if (!payloadData) {
-      throw new HttpException('Invalid ID token', 401);
+      throw new UnauthorizedException('Invalid ID token');
     }
     return payloadData;
   }
@@ -62,7 +62,7 @@ export class TokenService {
     const cacheKey = `refreshCode:${userId}`;
     const cachedCode = await this.cacheManager.get<string>(cacheKey);
     if (cachedCode !== code) {
-      throw new HttpException('Invalid refresh code', 401);
+      throw new UnauthorizedException('Invalid refresh code');
     }
     return true;
   }
@@ -73,7 +73,7 @@ export class TokenService {
         secret: this.configService.get('JWT_SECRET'),
       });
     } catch (error) {
-      throw new HttpException('Invalid access token', 401);
+      throw new UnauthorizedException('Invalid access token');
     }
   }
 
