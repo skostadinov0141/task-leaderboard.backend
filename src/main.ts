@@ -8,16 +8,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Task Leaderboard API')
     .setVersion('0.0.1')
-    .addBearerAuth({
-      type: 'http',
-      flows: {
-        password: {
-          tokenUrl: '/user/login',
-          refreshUrl: '/user/refresh',
-          scopes: ['read', 'write'],
-        },
-      },
-    })
+    .addBearerAuth()
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, documentFactory, {

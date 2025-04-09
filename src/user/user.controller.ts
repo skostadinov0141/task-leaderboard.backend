@@ -4,7 +4,7 @@ import { Public } from '../auth/is-public.decorator';
 import { SignUpDto } from './dtos/sign-up.dto';
 import { TokenPairDto } from '../auth/dtos/token-pair.dto';
 import { SignInDto } from './dtos/sign-in.dto';
-import { Request } from 'express';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('user')
 export class UserController {
@@ -32,6 +32,7 @@ export class UserController {
    * Get own user.
    */
   @Get('me')
+  @ApiBearerAuth()
   async getMe(@Req() request: any): Promise<any> {
     return await this.userService.getUserById(request.user);
   }
