@@ -5,6 +5,7 @@ import { Model } from 'mongoose';
 import { SignUpDto } from './dtos/sign-up.dto';
 import { AuthService } from '../auth/auth.service';
 import { SignInDto } from './dtos/sign-in.dto';
+import { TokenPairDto } from '../auth/dtos/token-pair.dto';
 
 @Injectable()
 export class UserService {
@@ -13,9 +14,7 @@ export class UserService {
     private readonly tokenService: AuthService,
   ) {}
 
-  async signUp(
-    payload: SignUpDto,
-  ): Promise<{ accessToken: string; refreshToken: string }> {
+  async signUp(payload: SignUpDto): Promise<TokenPairDto> {
     const {
       email,
       name,
@@ -37,9 +36,7 @@ export class UserService {
     return await this.tokenService.createTokenPair(savedUser._id);
   }
 
-  async signIn(
-    payload: SignInDto,
-  ): Promise<{ accessToken: string; refreshToken: string }> {
+  async signIn(payload: SignInDto): Promise<TokenPairDto> {
     const { sub: googleId } = await this.tokenService.validateGoogleIdToken(
       payload.idToken,
     );

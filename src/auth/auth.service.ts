@@ -6,6 +6,7 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { randomBytes } from 'crypto';
 import ms, { StringValue } from 'ms';
+import { TokenPairDto } from './dtos/token-pair.dto';
 
 @Injectable()
 export class AuthService {
@@ -82,9 +83,7 @@ export class AuthService {
     await this.cacheManager.del(cacheKey);
   }
 
-  async createTokenPair(
-    userId: string,
-  ): Promise<{ accessToken: string; refreshToken: string }> {
+  async createTokenPair(userId: string): Promise<TokenPairDto> {
     const accessToken = await this.createAccessToken(userId);
     const refreshToken = await this.createRefreshCode(userId);
     return { accessToken, refreshToken };
@@ -93,7 +92,7 @@ export class AuthService {
   async refreshTokenPair(
     userId: string,
     refreshToken: string,
-  ): Promise<{ accessToken: string; refreshToken: string }> {
+  ): Promise<TokenPairDto> {
     await this.validateRefreshCode(userId, refreshToken);
     const { accessToken, refreshToken: newRefreshToken } =
       await this.createTokenPair(userId);
