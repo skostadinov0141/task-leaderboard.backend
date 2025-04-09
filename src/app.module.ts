@@ -7,6 +7,7 @@ import { UserModule } from './user/user.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { AuthModule } from './auth/auth.module';
 import { RunModule } from './run/run.module';
+import { TaskModule } from './task/task.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { RunModule } from './run/run.module';
     UserModule,
     AuthModule,
     RunModule,
+    TaskModule,
   ],
   controllers: [AppController],
   providers: [AppService],
